@@ -87,6 +87,9 @@ export default function ReportDetailPage({
           </p>
         </div>
         <div className="flex gap-2">
+          <Link href={`/reports/${report.id}/edit`}>
+            <Button variant="outline">Редактировать</Button>
+          </Link>
           <Link href="/reports">
             <Button variant="outline">Назад к списку</Button>
           </Link>
