@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Employee {
+  id        String   @id @default(cuid())
+  name      String
+  role      String   // "developer" | "teamlead"
+  kpiBudget Float?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  metrics MetricConfig[]
+  entries ReportEntry[]
+}
+
+model MetricConfig {
+  id         String  @id @default(cuid())
+  employeeId String
+  name       String
+  category   String  // "speed" | "quality" | "management"
+  direction  String  // "positive" | "negative"
+  weight     Float
+  threshold  Float?
+  order      Int     @default(0)
+
+  employee Employee      @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  entries  ReportEntry[]
+
+  @@unique([employeeId, name])
+}
+
+model WeeklyReport {
+  id          String   @id @default(cuid())
+  periodStart DateTime
+  periodEnd   DateTime
+  createdAt   DateTime @default(now())
+
+  entries ReportEntry[]
+
+  @@unique([periodStart, periodEnd])
+}
+
+model ReportEntry {
+  id             String @id @default(cuid())
+  reportId       String
+  employeeId     String
+  metricConfigId String
+  fact           Float
+  goal           Float
+  percent        Float
+  weightedScore  Float
+
+  report       WeeklyReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  metricConfig MetricConfig @relation(fields: [metricConfigId], references: [id], onDelete: Cascade)
+
+  @@unique([reportId, employeeId, metricConfigId])
+}
