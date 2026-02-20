@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { NextResponse } from "next/server";
+import { calculateMoneyKpi } from "@/lib/kpi";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -65,10 +66,7 @@ export async function GET(request: Request) {
           ) / 100
         : 0;
 
-    const moneyKpi =
-      emp.kpiBudget !== null
-        ? Math.round(emp.kpiBudget * (monthlyKpi / 100))
-        : null;
+    const moneyKpi = calculateMoneyKpi(monthlyKpi, emp.kpiBudget);
 
     return {
       employee: emp,

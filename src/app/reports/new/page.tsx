@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CATEGORY_LABELS, calculateMetricPercent } from "@/lib/kpi";
+import { CATEGORY_LABELS, calculateMetricPercent, calculateMoneyKpi } from "@/lib/kpi";
 import type { EmployeeData, MetricConfigData } from "@/lib/types";
 import { getWeekRange, formatDateISO, formatDate } from "@/lib/dates";
 
@@ -353,10 +353,7 @@ export default function NewReportPage() {
             <TableBody>
               {employees.map((emp) => {
                 const kpi = employeeKpis[emp.id] ?? 0;
-                const money =
-                  emp.kpiBudget !== null
-                    ? Math.round(emp.kpiBudget * (kpi / 100))
-                    : null;
+                const money = calculateMoneyKpi(kpi, emp.kpiBudget);
                 return (
                   <TableRow key={emp.id}>
                     <TableCell className="font-medium">{emp.name}</TableCell>

@@ -1,6 +1,6 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { CATEGORY_LABELS } from "./kpi";
+import { CATEGORY_LABELS, calculateMoneyKpi } from "./kpi";
 import { formatDate, formatMonth } from "./dates";
 import { ROBOTO_REGULAR_BASE64, ROBOTO_MEDIUM_BASE64 } from "./roboto-font";
 import type { WeeklyReportData, MonthlyResponse, ReportEntryData } from "./types";
@@ -118,9 +118,12 @@ export function generateWeeklyPdf(report: WeeklyReportData) {
   const summaryRows = Array.from(empTotals.values()).map((emp) => [
     emp.name,
     `${emp.kpi.toFixed(1)}%`,
-    emp.budget !== null
-      ? `${Math.round(emp.budget * (emp.kpi / 100)).toLocaleString("ru-RU")} ${t("₽", "RUB", hasFont)}`
-      : "\u2014",
+    (() => {
+      const money = calculateMoneyKpi(emp.kpi, emp.budget);
+      return money !== null
+        ? `${money.toLocaleString("ru-RU")} ${t("₽", "RUB", hasFont)}`
+        : "\u2014";
+    })(),
   ]);
 
   autoTable(doc, {

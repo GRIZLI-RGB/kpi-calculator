@@ -62,7 +62,8 @@ export function calculateMoneyKpi(
   budget: number | null
 ): number | null {
   if (budget === null || budget === undefined) return null;
-  return Math.round(budget * (kpiPercent / 100));
+  const payablePercent = Math.max(0, Math.min(kpiPercent, 100));
+  return Math.round(budget * (payablePercent / 100));
 }
 
 export const CATEGORY_LABELS: Record<string, string> = {

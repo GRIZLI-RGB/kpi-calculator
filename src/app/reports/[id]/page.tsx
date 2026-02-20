@@ -13,7 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { CATEGORY_LABELS } from "@/lib/kpi";
+import { CATEGORY_LABELS, calculateMoneyKpi } from "@/lib/kpi";
 import { formatDate } from "@/lib/dates";
 import { generateWeeklyPdf } from "@/lib/pdf";
 import type { WeeklyReportData, ReportEntryData } from "@/lib/types";
@@ -172,10 +172,7 @@ export default function ReportDetailPage({
             </TableHeader>
             <TableBody>
               {Array.from(empTotals.values()).map((emp) => {
-                const money =
-                  emp.budget !== null
-                    ? Math.round(emp.budget * (emp.kpi / 100))
-                    : null;
+                const money = calculateMoneyKpi(emp.kpi, emp.budget);
                 return (
                   <TableRow key={emp.name}>
                     <TableCell className="font-medium">{emp.name}</TableCell>
